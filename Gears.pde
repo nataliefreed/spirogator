@@ -223,6 +223,11 @@ class GearedCircle extends Circle
     compute();
   }
   
+  int getNumTeeth()
+  {
+    return num_teeth;
+  }
+  
   void setRadius(float new_radius)
   {
     byRadius = true;

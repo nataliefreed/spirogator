@@ -20,9 +20,13 @@ final int SMALLEST_NUM_TEETH = 8;
 final int OUTER_START = 125;
 final int INNER_START = 30;
 final int PENDIST_START = 75;
+final float SPEED_START = 2.0;
+final int PEN_WIDTH_START = 1;
 
 float xOffset = 0;
 float yOffset = 0;
+
+float penWidth = PEN_WIDTH_START;
 
 ControlP5 cp5;
 
@@ -61,6 +65,7 @@ TextField outerNumTeethLabel;
 TextField innerNumTeethLabel;
 TextField simHoleDistLabel;
 TextField simSpeedLabel; 
+TextField penWidthLabel; 
 
 GearedCircle active = null;
 GearedCircle highlighted = null;
@@ -221,12 +226,12 @@ void drawSimulatorBackground()
 
   stroke(0);
   fill(200, 230); //gray menus
-  rect(page_h+3*border, border+tab_h, width-page_h-4*border, 150); //menu bars
-  rect(page_h+3*border, 2*border+tab_h+150, width-page_h-4*border, 300);
+  rect(page_h+3*border, border+tab_h, width-page_h-4*border, 120); //menu bars
+  rect(page_h+3*border, 2*border+tab_h+120, width-page_h-4*border, 330);
   rect(page_h+3*border, 3*border+tab_h+450, width-page_h-4*border, 100);
   fill(cp5.CP5BLUE.getBackground()); //top edges of menu bars
   rect(page_h+3*border, border+tab_h, width-page_h-4*border, 0.3*border);
-  rect(page_h+3*border, 2*border+tab_h+150, width-page_h-4*border, 0.3*border); 
+  rect(page_h+3*border, 2*border+tab_h+120, width-page_h-4*border, 0.3*border); 
   rect(page_h+3*border, 3*border+tab_h+450, width-page_h-4*border, 0.3*border);
 }
 
@@ -323,10 +328,10 @@ void drawSimulatorForeground()
    innerNumTeethLabel.draw();
    simHoleDistLabel.draw();
    simSpeedLabel.draw(); 
+   penWidthLabel.draw();
 //  println(outer_angle);
   if (!paused)
   {
-
     outer_angle += radians_per_frame;
     inner_angle = outer_angle*outer.num_teeth/inner.num_teeth - outer_angle;
 
@@ -341,7 +346,7 @@ void drawSimulatorForeground()
     innerHole.setTheta(-1*inner_angle);
 
     drawnLine.beginDraw();
-    drawnLine.strokeWeight(1);
+    drawnLine.strokeWeight(penWidth);
     if (penOn && drawnLine != null)
     {
       drawnLine.stroke(penColor);
@@ -370,6 +375,14 @@ void drawSimulatorForeground()
   line(inner.x, inner.y, fromPolar(inner.x, inner.y, inner.r, -1*inner_angle).x, fromPolar(inner.x, inner.y, inner.r, -1*inner_angle).y);
   
   if(!paused && (outer_angle - innerTurnCounter - radians_per_frame) / (2.0*PI) >= numberOfTurns) { pause(); }
+  
+  drawPetalsAndLaps();
+}
+
+void drawPetalsAndLaps()
+{
+  text("Number of petals: " + numberOfPetals, page_w+50, 110);
+  text("Number of laps inside outer gear: " + numberOfTurns, page_w+50, 150);
 }
 
 void createDrawingGears()
@@ -550,12 +563,22 @@ public void innerToothNumSlider(int val)
 {
   if(inner != null)
   {
+    if(val > outer.getNumTeeth())
+    {
+      val = outer.getNumTeeth();
+    }
     inner.setNumTeeth(val);
 //    println();
     computePetals();
     //println(lcm(outer.num_teeth, inner.num_teeth));
     innerNumTeethLabel.setVal(Integer.toString(val));
   }
+}
+
+public void penWidthSlider(int val)
+{
+  penWidth = val;
+  penWidthLabel.setVal(Integer.toString((int) val));
 }
 
 void computePetals()
@@ -767,6 +790,16 @@ void sendText()
       try
       {
         float value = Float.parseFloat(activeText.finalVal());
+        s.setValue(value);
+      }
+      catch(NumberFormatException e) { }
+    }
+    else if(activeText == penWidthLabel)
+    {
+      Slider s = (Slider) cp5.getController("penWidthSlider");
+      try
+      {
+        float value = Integer.parseInt(activeText.finalVal());
         s.setValue(value);
       }
       catch(NumberFormatException e) { }
@@ -1130,21 +1163,26 @@ void createMenu()
 //  rect(page_h+3*border, 2*border+tab_h+150, width-page_h-4*border, 300);
 //  rect(page_h+3*border, 3*border+tab_h+450, width-page_h-4*border, 100);
   
-  outerNumTeethLabel =  new TextField(page_h+3*border+20, 2*border+tab_h+150+border+5, createFont("arial", 20), createFont("arial", 14), Integer.toString(OUTER_START), "", color(0), color(0), color(175, 175, 175), color(0, 255, 255));
-  innerNumTeethLabel = new TextField(page_h+3*border+20, 2*border+tab_h+150+border+15+border+5, createFont("arial", 20), createFont("arial", 18), Integer.toString(INNER_START), "", color(0), color(0), color(175, 175, 175), color(0, 255, 255));
-  simHoleDistLabel = new TextField(page_h+3*border+20+90, 2*border+tab_h+150+border+30+2*border+5, createFont("arial", 20), createFont("arial", 18), "Integer.toString(PENDIST_START)", "", color(0), color(0), color(175, 175, 175), color(0, 255, 255));
-  simSpeedLabel =  new TextField(page_h+3*border+20+120+border, 2*border+tab_h+150+240+15, createFont("arial", 20), createFont("arial", 18), "5", "", color(0), color(0), color(175, 175, 175), color(0, 255, 255));
+  outerNumTeethLabel =  new TextField(page_h+3*border+20, 2*border+tab_h+120+border+5, createFont("arial", 20), createFont("arial", 14), Integer.toString(OUTER_START), "", color(0), color(0), color(175, 175, 175), color(0, 255, 255));
+  innerNumTeethLabel = new TextField(page_h+3*border+20, 2*border+tab_h+120+border+15+border+5, createFont("arial", 20), createFont("arial", 18), Integer.toString(INNER_START), "", color(0), color(0), color(175, 175, 175), color(0, 255, 255));
+  simHoleDistLabel = new TextField(page_h+3*border+20+90, 2*border+tab_h+150+border+2*border+5, createFont("arial", 20), createFont("arial", 18), Integer.toString(PENDIST_START), "", color(0), color(0), color(175, 175, 175), color(0, 255, 255));
+  simSpeedLabel =  new TextField(page_h+3*border+20+120+border, 2*border+tab_h+150+40+200+15, createFont("arial", 20), createFont("arial", 18), "5", "", color(0), color(0), color(175, 175, 175), color(0, 255, 255));
+  penWidthLabel = new TextField(page_h+3*border+20, 2*border+tab_h+150+205, createFont("arial", 20), createFont("arial", 18), Integer.toString(PEN_WIDTH_START), "", color(0), color(0), color(175, 175, 175), color(0, 255, 255));
   outerNumTeethLabel.setActive(true);
   innerNumTeethLabel.setActive(true);
   simHoleDistLabel.setActive(true);
   simSpeedLabel.setActive(true);
+  penWidthLabel.setActive(true);
+  
   textfields.add(outerNumTeethLabel);
   textfields.add(innerNumTeethLabel);
   textfields.add(simHoleDistLabel);
   textfields.add(simSpeedLabel);
+  textfields.add(penWidthLabel);
+  
   
   cp5.addSlider("outerToothNumSlider")
-     .setPosition(page_h+3*border+20, 2*border+tab_h+150+border+10)
+     .setPosition(page_h+3*border+20, 2*border+tab_h+150+border-20)
      .setSize(400, 15)
      .setRange(SMALLEST_NUM_TEETH, 200)
      .setValue(125)
@@ -1156,7 +1194,7 @@ void createMenu()
   cp5.getController("outerToothNumSlider").getValueLabel().hide();
   
   cp5.addSlider("innerToothNumSlider")
-     .setPosition(page_h+3*border+20, 2*border+tab_h+150+border+15+border+10)
+     .setPosition(page_h+3*border+20, 2*border+tab_h+150+border+15+border-20)
      .setSize(400, 15)
      .setRange(SMALLEST_NUM_TEETH, 200)
      .setValue(20)
@@ -1168,7 +1206,7 @@ void createMenu()
   cp5.getController("innerToothNumSlider").getValueLabel().hide();
   
   cp5.addSlider("penDistFromCenter")
-     .setPosition(page_h+3*border+20, 2*border+tab_h+150+border+30+2*border+10)
+     .setPosition(page_h+3*border+20, 2*border+tab_h+150+border+30+2*border-20)
      .setSize(400, 15)
      .setRange(0, 100)
      .setValue(75)
@@ -1183,13 +1221,25 @@ void createMenu()
      .setPosition(page_h+3*border+20+120+border, 2*border+tab_h+150+240+20)
      .setSize(250, 15)
      .setRange(0.0, 6.0)
-     .setValue(1.0)
-     .setLabel("degrees per frame (speed control)")
+     .setValue(SPEED_START)
+     .setLabel("speed (degrees moved per frame)")
      .setSliderMode(Slider.FLEXIBLE)
      .moveTo("simulator")
      .getCaptionLabel().align(ControlP5.LEFT, ControlP5.TOP_OUTSIDE).setPaddingX(35).setFont(createFont("Arial", 12)).toUpperCase(false).setColor(0)
      ;
   cp5.getController("rotationSpeedSlider").getValueLabel().hide();
+  
+  cp5.addSlider("penWidthSlider")
+     .setPosition(page_h+3*border+20, 2*border+tab_h+150+210)
+     .setSize(400, 15)
+     .setRange(1, 40)
+     .setValue(PEN_WIDTH_START)
+     .setLabel("pen width in pixels")
+     .setSliderMode(Slider.FLEXIBLE)
+     .moveTo("simulator")
+     .getCaptionLabel().align(ControlP5.LEFT, ControlP5.TOP_OUTSIDE).setPaddingX(35).setFont(createFont("Arial", 12)).toUpperCase(false).setColor(0)
+     ;
+  cp5.getController("penWidthSlider").getValueLabel().hide();
   
   cp5.addButton("clearScreenButton")
     .setPosition(page_h+3*border+20, 2*border+tab_h+150+240)
@@ -1279,7 +1329,7 @@ void createMenu()
   //    ;
 
   cp5.addButton("penButton")
-    .setPosition(page_h+5*border+50*6, 2*border+tab_h+150+175)
+    .setPosition(page_h+5*border+50*6, 2*border+tab_h+150+135)
       .setLabel("Pen up")
         .updateSize()
           .setSize(60, 40)
@@ -1294,7 +1344,7 @@ void createMenu()
 
 
   RadioButton r = cp5.addRadioButton("penColorSelector")
-    .setPosition(page_h+3*border+20, 2*border+tab_h+150+170)
+    .setPosition(page_h+3*border+20, 2*border+tab_h+150+130)
       .setSize(50, 50)
         //         .setColorForeground(color(120))
         //         .setColorActive(color(255))
@@ -1324,13 +1374,13 @@ void createMenu()
   penColor = r.getItem(0).getColor().getActive();
 
   cp5.addButton("playButton")
-    .setPosition(page_h+3*border+20, border+tab_h+10)
+    .setPosition(page_h+3*border+20, border+tab_h)
       .setImages(loadImage("play.png"), loadImage("play.png"), loadImage("play.png"))
         .updateSize()
           .moveTo("simulator");
 
   cp5.addButton("pauseButton")
-    .setPosition(page_h+3*border+20, border+tab_h+10)
+    .setPosition(page_h+3*border+20, border+tab_h)
       .setImages(loadImage("pause.png"), loadImage("pause.png"), loadImage("pause.png"))
         .updateSize()
           .hide()
