@@ -23,6 +23,8 @@ final int PENDIST_START = 75;
 final float SPEED_START = 2.0;
 final int PEN_WIDTH_START = 1;
 
+final float HOLE_RADIUS = 0.15/2.0 * (float)dpi;
+
 float xOffset = 0;
 float yOffset = 0;
 

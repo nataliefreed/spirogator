@@ -145,7 +145,7 @@ class GearedCircle extends Circle
     this(gc.x, gc.y, gc.num_teeth, gc.r, gc.tooth_w, gc.tooth_h, gc.type, gc.is_inner, gc.byRadius);
     for(int i=0;i<gc.holes.size();i++)
     {
-      holes.add(new SpiroHole(3, gc.holes.get(i).rdist, gc.holes.get(i).theta, this)); 
+      holes.add(new SpiroHole(HOLE_RADIUS, gc.holes.get(i).rdist, gc.holes.get(i).theta, this)); 
     }
     
   }
@@ -289,7 +289,7 @@ class GearedCircle extends Circle
     {
       float rdist = rdist_percent*r;
       PVector h = PVector.add(center(), polarPVector(rdist, theta));
-      holes.add(new SpiroHole(3, rdist, theta, this));
+      holes.add(new SpiroHole(HOLE_RADIUS, rdist, theta, this));
     }
   }
   
@@ -299,7 +299,7 @@ class GearedCircle extends Circle
     {
       float rdist = distFromCenter(x, y)/r;
       float theta = getTheta(x, y);
-      SpiroHole hole = new SpiroHole(3, rdist, theta, this);
+      SpiroHole hole = new SpiroHole(HOLE_RADIUS, rdist, theta, this);
       holes.add(hole);
       return hole;
     }
