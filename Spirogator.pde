@@ -1086,7 +1086,7 @@ void penButton()
 
 void drawingExportButton()
 {
-  png = createGraphics((int)(page_w), (int)(page_h), JAVA2D, "drawing.png");
+  png = createGraphics((int)(page_w), (int)(page_h + menu_h), JAVA2D, "drawing.png");
   png.beginDraw();
 
   if (prevPoint != null) png.image(drawnLine, 0, 0);
