@@ -32,7 +32,7 @@ float penWidth = PEN_WIDTH_START;
 
 ControlP5 cp5;
 
-DecimalFormat decimalFormat = new DecimalFormat("0.0");
+DecimalFormat decimalFormat;
 
 int gearshape = 2;
 boolean geartype = true;
@@ -96,12 +96,15 @@ float innerTurnCounter = 0;
 
 PFont font;                          // STEP 2 Declare PFont variable
 
+void settings() {
+  size((int)(page_w+sr_menu_w), (int)(page_h+tab_h+2*border));
+}
+
 void setup()
 { 
   frame.setBackground(new java.awt.Color(0));
-
-  size((int)(page_w+sr_menu_w), (int)(page_h+tab_h+2*border));
-
+  
+  decimalFormat = new DecimalFormat("0.0");
   font = createFont("Arial", 16, true);
   textFont(font, 16);
 
@@ -137,7 +140,7 @@ void draw()
 void drawBackground()
 {
   background(0);
-  fill(cp5.CP5BLUE.getActive());
+  fill(#62C3F2);
   noStroke();
   rect(0, 30, width, height); //blue app background
 }
@@ -174,7 +177,7 @@ void drawGearMakerBackground()
   fill(200, 230);
   rectMode(CORNERS);
   rect(page_w+3*border, border+tab_h, width-border, height-border);  //draw menu bar
-  fill(cp5.CP5BLUE.getBackground());
+  fill(#0E5F86);
   rect(page_w+3*border, border+tab_h, width-border, tab_h+1.3*border); //draw top of menu bar
   rectMode(CORNER);
 
@@ -231,7 +234,7 @@ void drawSimulatorBackground()
   rect(page_h+3*border, border+tab_h, width-page_h-4*border, 120); //menu bars
   rect(page_h+3*border, 2*border+tab_h+120, width-page_h-4*border, 330);
   rect(page_h+3*border, 3*border+tab_h+450, width-page_h-4*border, 100);
-  fill(cp5.CP5BLUE.getBackground()); //top edges of menu bars
+  fill(#0E5F86); //top edges of menu bars
   rect(page_h+3*border, border+tab_h, width-page_h-4*border, 0.3*border);
   rect(page_h+3*border, 2*border+tab_h+120, width-page_h-4*border, 0.3*border); 
   rect(page_h+3*border, 3*border+tab_h+450, width-page_h-4*border, 0.3*border);
@@ -1125,7 +1128,7 @@ void createMenu()
   cp5 = new ControlP5(this);
 
   PFont p = createFont("Verdana", 10);
-  cp5.setControlFont(p);
+  cp5.setFont(p);
 
   cp5.addTab("simulator")
     //     .setColorBackground(color(0, 50))
@@ -1479,4 +1482,3 @@ int gcd(int a, int b) //greatest common factor/divisor (Euclidean algorithm)
   if ((a % b) == 0) return b;
   else return gcd(b, a % b);
 }
-
